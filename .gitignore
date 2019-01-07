@@ -1,0 +1,10 @@
+bin
+.serverless 
+node_modules
+__pycache__/
+*.pyc
+.coverage
+venv/
+*.egg-info/
+build/
+dist/

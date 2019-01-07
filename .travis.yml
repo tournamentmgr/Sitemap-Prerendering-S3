@@ -1,0 +1,13 @@
+language: python
+dist: xenial
+python:
+  - "3.7"
+sudo: true
+install:
+  - pip install -r requirements.txt
+  - python setup.py install
+script:
+  - python -m unittest discover -s tests/
+  - python -m pylint scraper/*.py prerender/*.py
+  - coverage run --source=prerender/,scraper/  -m unittest discover -s tests/ && coverage report -m
+  - codecov
