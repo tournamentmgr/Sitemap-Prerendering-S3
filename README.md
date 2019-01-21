@@ -15,7 +15,13 @@ This module was designed to run as a prerender client that caches to s3. Utilizi
  docker run -e AWS_ACCESS_KEY_ID=AWSKEY -e AWS_SECRET_ACCESS_KEY=AWSSECRET -t sitemap-prerender -i python -c "from prerender.prerender import Prerender; Prerender(#Options).capture()"
 </code>
 
-### Local
+### Development
+
+If developing, ensure to install the requirements.txt file.
+
+<code>pip install -r requirements.txt</code>
+
+### Module Installation
 Install the modules:
 
 <code>python setup.py install</code>
