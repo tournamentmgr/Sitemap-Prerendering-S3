@@ -96,3 +96,18 @@ class PrerenderTestCase(TestCase):
         )._analyze_site_map(' '.join(urls), "https://www.google.com/gmail/sitemap.xml")
         results = [result[0][0] for result in capture.call_args_list]
         self.assertEqual(results.sort(), urls.sort())
+    
+    @patch.object(Prerender, '_archive_content')
+    @patch('scraper.scraper.query_url')
+    def test_auth_passed(self, query, archive):
+        query.return_value = "test"
+        archive.return_value = ""
+        prerender = Prerender(
+            site_map_url = "https://example.com/sitemap.xml",
+            s3_bucket = "some-bucket",
+            check_valid = False,
+            auth = ('test', 'pass')
+        )._capture_and_upload("https:/example.com/home/test/")
+        args, kwargs = call = query.call_args_list[0]
+        self.assertEqual(kwargs['username'], "test")
+        self.assertEqual(kwargs['password'], "pass")
