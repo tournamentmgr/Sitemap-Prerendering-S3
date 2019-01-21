@@ -90,4 +90,15 @@ pre.capture()
       Checks rather the provided site map url exists for the root sitemap
     </td>
   </tr>
+    <tr>
+    <td>
+      False
+    </td>
+    <td>
+      auth
+    </td>
+    <td>
+      Utilized for basic authenticating to page.
+    </td>
+  </tr>
 </table>
