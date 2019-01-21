@@ -41,7 +41,7 @@ class Prerender():
     def __check_valid_url(self, url):
         auth = (self.username, self.password) if (self.username and self.password) else None
         if get(url, verify=False, auth=auth).status_code > 201:
-            raise ValueError(f"Non 200 status code reached for {url}")
+            raise ValueError("Non 200 status code reached for {url}".format(url=url))
 
     def __get_html_content(self, url: str) -> any:
         """
@@ -76,9 +76,9 @@ class Prerender():
             if response:
                 s3_client = Session().resource('s3')
                 if urlparse(file_name).query:
-                    file_name = f"{urlparse(file_name).path}?{urlparse(file_name).query}.html"
+                    file_name = "{path}?{query}.html".format(path=urlparse(file_name).path, query=urlparse(file_name).query)
                 else:
-                    file_name = f"{urlparse(file_name).path}.html"
+                    file_name = "{path}.html".format(path=urlparse(file_name).path)
                 debug("Creating file %s", file_name)
                 obj = s3_client.Object(self.bucket, file_name)
                 return obj.put(Body=response)
