@@ -72,6 +72,7 @@ class Prerender():
         """
         A function to upload a response to a file in S3
         """
+        # pylint: disable=C0301
         try:
             if response:
                 s3_client = Session().resource('s3')
