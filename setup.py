@@ -5,7 +5,7 @@ with open("README.md", 'r') as f:
 
 setup(
     name='scraper',
-    version='1.0',
+    version='1.1',
     description='A module to render webpages',
     long_description=LONG_DESCRIPTION,
     author='Dan Quackenbush',
@@ -29,7 +29,7 @@ setup(
 
 setup(
     name='prerender',
-    version='1.0',
+    version='1.1',
     description='A module to prerender webpages and post to S3',
     long_description=LONG_DESCRIPTION,
     author='Dan Quackenbush',
