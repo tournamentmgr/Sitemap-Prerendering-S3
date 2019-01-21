@@ -4,8 +4,8 @@ A function to hold the Prerender class
 """
 import re
 from logging import debug, error
-from urllib.request import urlopen
 from urllib.parse import urlparse
+from urllib3 import disable_warnings
 
 # External
 from boto3 import resource, Session
@@ -15,36 +15,40 @@ class Prerender():
     """
     A class to query a root and underlying sitemaps, to capture all pages to prerender to S3
     """
-    def __init__(self, site_map_url: str,
-                 s3_bucket: str,
-                 check_valid: bool = True
-                 ):
 
+    def __init__(self,
+                 site_map_url: str,
+                 s3_bucket: str,
+                 check_valid: bool = True,
+                 auth: (str, str)=(None, None)):
+
+        # Disable Verify Warnings
+        disable_warnings()
+
+        # Set variables
         self.local = False
         self.site_map_url = site_map_url
-
-        self.check = False
-        if check_valid:
-            self.__check_valid_url(self.site_map_url)
-            self.check = True
-
+        self.username = auth[0]
+        self.password = auth[1]
         self.domain = urlparse(self.site_map_url).netloc
         self.bucket = s3_bucket
 
-    @staticmethod
-    def __check_valid_url(url):
-        import ssl
-        ctx = ssl._create_unverified_context()
-        if urlopen(url, context=ctx).getcode() != 200:
-            raise ValueError('Received non 200 for url')
+        # Check if sitemap is valid
+        self.check = check_valid
+        if check_valid:
+            self.__check_valid_url(self.site_map_url)
 
-    @staticmethod
-    def __get_html_content(url: str) -> any:
+    def __check_valid_url(self, url):
+        auth = (self.username, self.password) if (self.username and self.password) else None
+        if get(url, verify=False, auth=auth).status_code > 201:
+            raise ValueError(f"Non 200 status code reached for {url}")
+
+    def __get_html_content(self, url: str) -> any:
         """
         A function that takes in a url and invokes a function (local) and returns html
         """
         from scraper.scraper import query_url
-        return query_url(url)
+        return query_url(url, username=self.username, password=self.password)
 
     def _capture_and_upload(self, url):
         """
@@ -71,7 +75,10 @@ class Prerender():
         try:
             if response:
                 s3_client = Session().resource('s3')
-                file_name = f"{urlparse(file_name).path}?{urlparse(file_name).query}.html"
+                if urlparse(file_name).query:
+                    file_name = f"{urlparse(file_name).path}?{urlparse(file_name).query}.html"
+                else:
+                    file_name = f"{urlparse(file_name).path}.html"
                 debug("Creating file %s", file_name)
                 obj = s3_client.Object(self.bucket, file_name)
                 return obj.put(Body=response)
@@ -120,6 +127,7 @@ class Prerender():
         A function to capture the initial site map and then send to analyze
         """
         debug("Capturing sitemap at %s", self.site_map_url)
-        res = get(self.site_map_url, verify=False)
+        auth = (self.username, self.password) if (self.username and self.password) else None
+        res = get(self.site_map_url, verify=False, auth=auth)
         res.raise_for_status()
         self._analyze_site_map(res.text, self.site_map_url)
