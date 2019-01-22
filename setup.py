@@ -11,7 +11,7 @@ setup(
     author='Dan Quackenbush',
     author_email='dan@tournamentmgr.com',
     packages=find_packages(),
-    install_requires=[
+    setup_requires=[
         'pyppeteer'
     ],
     python_requires='>=3.6',
@@ -34,7 +34,7 @@ setup(
     author='Dan Quackenbush',
     author_email='dan@tournamentmgr.com',
     packages=find_packages(),
-    install_requires=[
+    setup_requires=[
         'boto3',
         'requests'
     ],

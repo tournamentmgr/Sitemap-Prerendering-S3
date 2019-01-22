@@ -17,7 +17,7 @@ class Prerender():
     """
 
     def __init__(self,
-                 site_map_url: str,
+                 robots_url: str,
                  s3_bucket: str,
                  check_valid: bool = True,
                  auth: (str, str)=(None, None)):
@@ -27,16 +27,16 @@ class Prerender():
 
         # Set variables
         self.local = False
-        self.site_map_url = site_map_url
+        self.robots_url = robots_url
         self.username = auth[0]
         self.password = auth[1]
-        self.domain = urlparse(self.site_map_url).netloc
+        self.domain = urlparse(self.robots_url).netloc
         self.bucket = s3_bucket
 
         # Check if sitemap is valid
         self.check = check_valid
         if check_valid:
-            self.__check_valid_url(self.site_map_url)
+            self.__check_valid_url(self.robots_url)
 
     def __check_valid_url(self, url):
         auth = (self.username, self.password) if (self.username and self.password) else None
@@ -126,8 +126,13 @@ class Prerender():
         """
         A function to capture the initial site map and then send to analyze
         """
-        debug("Capturing sitemap at %s", self.site_map_url)
+        debug("Capturing robots at %s", self.robots_url)
         auth = (self.username, self.password) if (self.username and self.password) else None
-        res = get(self.site_map_url, verify=False, auth=auth)
+        res = get(self.robots_url, verify=False, auth=auth)
         res.raise_for_status()
-        self._analyze_site_map(res.text, self.site_map_url)
+        for line in res.text.split("\n"):
+            if 'sitemap' in line.lower():
+                url = line.split("map:")[1].strip()
+                response = get(url, verify=False, auth=auth)
+                response.raise_for_status()
+                self._analyze_site_map(response.text, url)

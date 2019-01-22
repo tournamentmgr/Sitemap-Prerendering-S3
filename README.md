@@ -68,10 +68,10 @@ pre.capture()
       True
     </td>
     <td>
-      site_map_url
+      robots_url
     </td>
     <td>
-      The path to your root sitemap,
+      The path to your root robots file. This will contain the sitemap info
     </td>
   </tr>
   <tr>

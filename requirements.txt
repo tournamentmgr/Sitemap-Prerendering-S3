@@ -1,3 +1,6 @@
+boto3
+requests
+pyppeteer
 coverage
 pylint
 virtualenv
