@@ -4,12 +4,21 @@ from prerender.prerender import Prerender
 import botocore
 import responses
 
+@patch.object(Prerender, '_check_valid_xml', new=Mock())
 class PrerenderTestCase(TestCase):
+    
+    @staticmethod
+    def get_test_xml(urls) -> str:
+        xml_string = "<urlset>"
+        for item in urls:
+            xml_string += f"<url><loc>{item}</loc></url>"
+        xml_string += "</urlset>"
+        return xml_string
+
     def test_request_local(self):
         prerender = Prerender(
             robots_url = "https://example.com",
             s3_bucket = "some-bucket",
-            check_valid = False
         )
         self.assertEqual(prerender.bucket, "some-bucket")
 
@@ -17,7 +26,6 @@ class PrerenderTestCase(TestCase):
         prerender = Prerender(
             robots_url = "https://subdomain.example.com/robots.txt",
             s3_bucket = "some-bucket",
-            check_valid = False
         )
         self.assertEqual(prerender.domain, "subdomain.example.com")
 
@@ -28,7 +36,6 @@ class PrerenderTestCase(TestCase):
         response = Prerender(
             robots_url = "https://subdomain.example.com/robots.txt",
             s3_bucket = "some-bucket",
-            check_valid = False
         )._archive_content(
             file_name="test", response="some tezt"
         )
@@ -36,37 +43,16 @@ class PrerenderTestCase(TestCase):
 
     @responses.activate
     @patch.object(Prerender, '_capture_and_upload')
-    def test_subsite_recursive_called(self, prerender):
-        responses.add(responses.GET, 'https://subdomain.example.com/page1/sitemap.xml',
-                  json={}, status=200)
-        responses.add(responses.GET, 'https://subdomain.example.com/page2/sitemap.xml',
-                  json={}, status=200)
-        
-        # .json.return_value = {}
-        prerender.return_value = None
-        Prerender(
-            robots_url = "https://subdomain.example.com/robots.txt",
-            s3_bucket = "some-bucket",
-            check_valid = False
-        )._analyze_site_map(
-            body="https://subdomain.example.com/page1/sitemap.xml https://subdomain.example.com/page2/sitemap.xml", 
-            url="https://subdomain.example.com/sitemap.xml"
-        )
-        self.assertEqual(len(responses.calls), 2)
-    
-    @responses.activate
-    @patch.object(Prerender, '_capture_and_upload')
     def test_capture_calls(self, prerender):
         responses.add(responses.GET, 'https://subdomain.example.com/robots.txt',
                   body="Sitemap: https://example.com/sitemap.xml", status=200)
-        responses.add(responses.GET, 'https://example.com/sitemap.xml', json={}, status=200)
+        responses.add(responses.GET, 'https://example.com/sitemap.xml', body=self.get_test_xml(["https://example.com", "https://example.com/page1"]), status=200)
 
         # .json.return_value = {}
         prerender.return_value = None
         Prerender(
             robots_url = "https://subdomain.example.com/robots.txt",
             s3_bucket = "some-bucket",
-            check_valid = False
         ).capture()
         self.assertEqual(len(responses.calls), 2)
 
@@ -79,7 +65,6 @@ class PrerenderTestCase(TestCase):
         prerender = Prerender(
             robots_url = "https://example.com/sitemap.xml",
             s3_bucket = "some-bucket",
-            check_valid = False
         )._capture_and_upload("https:/example.com/home/test/")
         args, kwargs = call = archive.call_args_list[0]
         self.assertEqual(kwargs['file_name'], "home/test")
@@ -88,13 +73,12 @@ class PrerenderTestCase(TestCase):
     @patch.dict('os.environ', {})
     @patch.object(Prerender, '_capture_and_upload')
     def test_analyze_site_to_get_urls(self, capture):
-        urls = ["https://example.com/sub/page1", "http://example.com/sub/page2"]
+        urls = ["https://example.com/page1", "http://example.com/page2"]
         capture.return_value = None
         prerender = Prerender(
-            robots_url = "https://example.com/sitemap.xml",
+            robots_url = "https://example.com/robots.txt",
             s3_bucket = "some-bucket",
-            check_valid = False,
-        )._analyze_site_map(' '.join(urls), "https://www.google.com/gmail/sitemap.xml")
+        )._analyze_site_map(self.get_test_xml(urls), "https://example.com/sitemap.xml")
         results = [result[0][0] for result in capture.call_args_list]
         self.assertEqual(results.sort(), urls.sort())
     
@@ -106,7 +90,21 @@ class PrerenderTestCase(TestCase):
         prerender = Prerender(
             robots_url = "https://example.com/sitemap.xml",
             s3_bucket = "some-bucket",
-            check_valid = False,
+            auth = ('test', 'pass')
+        )._capture_and_upload("https:/example.com/home/test/")
+        args, kwargs = call = query.call_args_list[0]
+        self.assertEqual(kwargs['username'], "test")
+        self.assertEqual(kwargs['password'], "pass")
+
+    
+    @patch.object(Prerender, '_archive_content')
+    @patch('scraper.scraper.query_url')
+    def test_auth_passed(self, query, archive):
+        query.return_value = "test"
+        archive.return_value = ""
+        prerender = Prerender(
+            robots_url = "https://example.com/sitemap.xml",
+            s3_bucket = "some-bucket",
             auth = ('test', 'pass')
         )._capture_and_upload("https:/example.com/home/test/")
         args, kwargs = call = query.call_args_list[0]

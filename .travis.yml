@@ -5,9 +5,10 @@ python:
 sudo: true
 install:
   - pip install -r requirements.txt
-  - python setup.py install
+  - python scraper/setup.py install
+  - python prerender/setup.py install
 script:
   - python -m unittest discover -s tests/
-  - python -m pylint scraper/*.py prerender/*.py
+  - python -m pylint scraper/scraper.py prerender/prerender.py
   - coverage run --source=prerender/,scraper/  -m unittest discover -s tests/ && coverage report -m
   - codecov

@@ -24,7 +24,10 @@ If developing, ensure to install the requirements.txt file.
 ### Module Installation
 Install the modules:
 
-<code>python setup.py install</code>
+<code>
+python scraper/setup.py install
+python prerender/setup.py install
+</code>
 
 <br>
 
@@ -85,17 +88,6 @@ pre.capture()
       Cache Archive bucket name
     </td>
   </tr>
-  <tr>
-    <td>
-      False
-    </td>
-    <td>
-      check_valid
-    </td>
-    <td>
-      Checks rather the provided site map url exists for the root sitemap
-    </td>
-  </tr>
     <tr>
     <td>
       False
@@ -105,6 +97,20 @@ pre.capture()
     </td>
     <td>
       Utilized for basic authenticating to page.
+    </td>
+  </tr>
+    </tr>
+    <tr>
+    <td>
+      False
+    </td>
+    <td>
+      query_char_deliminator
+    </td>
+    <td>
+      (recommended) - Character to replace the question mark. 
+      If storing static pages, AWS doesnt allow you to have ? in a file to serve the content. So changing to a different character will fix this.
+      Ex) /subpage?id=1 and your query_char_deliminator is '#', your page will be stored as /subpage#id=1
     </td>
   </tr>
 </table>

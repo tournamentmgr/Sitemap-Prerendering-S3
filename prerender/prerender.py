@@ -1,8 +1,7 @@
-# pylint: disable=W0212,W0703
+# pylint: disable=W0212,W0703,C0301
 """
 A function to hold the Prerender class
 """
-import re
 from logging import debug, error
 from urllib.parse import urlparse
 from urllib3 import disable_warnings
@@ -10,6 +9,7 @@ from urllib3 import disable_warnings
 # External
 from boto3 import resource, Session
 from requests import get
+from xmltodict import parse
 
 class Prerender():
     """
@@ -19,8 +19,8 @@ class Prerender():
     def __init__(self,
                  robots_url: str,
                  s3_bucket: str,
-                 check_valid: bool = True,
-                 auth: (str, str)=(None, None)):
+                 auth: (str, str)=(None, None),
+                 query_char_deliminator='?'):
 
         # Disable Verify Warnings
         disable_warnings()
@@ -31,17 +31,16 @@ class Prerender():
         self.username = auth[0]
         self.password = auth[1]
         self.domain = urlparse(self.robots_url).netloc
+        self.query_char_deliminator = query_char_deliminator
         self.bucket = s3_bucket
 
-        # Check if sitemap is valid
-        self.check = check_valid
-        if check_valid:
-            self.__check_valid_url(self.robots_url)
 
-    def __check_valid_url(self, url):
+    def _check_valid_xml(self, url):
         auth = (self.username, self.password) if (self.username and self.password) else None
-        if get(url, verify=False, auth=auth).status_code > 201:
+        response = get(url, verify=False, auth=auth)
+        if response.status_code > 201:
             raise ValueError(f"Non 200 status code reached for {url}")
+        parse(response.text)
 
     def __get_html_content(self, url: str) -> any:
         """
@@ -76,9 +75,9 @@ class Prerender():
             if response:
                 s3_client = Session().resource('s3')
                 if urlparse(file_name).query:
-                    file_name = f"{urlparse(file_name).path}?{urlparse(file_name).query}.html"
+                    file_name = f"{urlparse(file_name).path}{self.query_char_deliminator}{urlparse(file_name).query}"
                 else:
-                    file_name = f"{urlparse(file_name).path}.html"
+                    file_name = urlparse(file_name).path
                 debug("Creating file %s", file_name)
                 obj = s3_client.Object(self.bucket, file_name)
                 return obj.put(Body=response)
@@ -90,19 +89,13 @@ class Prerender():
 
     def _analyze_site_map(self, body: str, url: str):
         """
-        A function for analyzing a sitemap. With all https websites, map to pool
+        A function for analyzing a sitemap. Utilizing XML Dict parse the urlset to get all urls.
+        Only return the urls in the matching domain, and then capture and upload each url
         """
         # pylint: disable=C0301
         urls = []
-        for site in re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', body):
-            site = site.replace("</loc>", '')
-            if ".xml" in site and url != site:
-                content = get(site, verify=False).text
-                self._analyze_site_map(content, url)
-            else:
-                urls.append(site)
-
-        # Condense to unique
+        items = parse(body).get('urlset', {}).get('url', {})
+        urls = [item['loc'] for item in items if self.domain in item.get('loc')]
         urls = list(set(urls))
         debug("Found %s total urls to cache under %s", len(urls), url)
         for site in urls:
@@ -135,4 +128,7 @@ class Prerender():
                 url = line.split("map:")[1].strip()
                 response = get(url, verify=False, auth=auth)
                 response.raise_for_status()
-                self._analyze_site_map(response.text, url)
+                if '<html>' in response.text:
+                    error(f"{url} is html, skipping")
+                else:
+                    self._analyze_site_map(response.text, url)

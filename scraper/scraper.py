@@ -17,7 +17,7 @@ async def __get_page(url: str, username: str = None, password: str = None):
     if username and password:
         await page.authenticate({'username': username, 'password': password})
     debug("loading page %s", url)
-    await page.goto(url)
+    await page.goto(url, waitUntil=['load'])
     content = await page.content()
     await browser.close()
     return content

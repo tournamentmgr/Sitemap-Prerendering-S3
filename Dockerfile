@@ -6,6 +6,7 @@ libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxc
 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
 fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont \
 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget && \
-apt-get clean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+apt-get clean && apt-get autoremove -y
 COPY . .
-RUN python setup.py install
+RUN python prerender/setup.py install
+RUN python scraper/setup.py install
