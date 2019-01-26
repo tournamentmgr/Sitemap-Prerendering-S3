@@ -37,7 +37,7 @@ class Prerender():
         self.bucket = s3_bucket
 
         if allowed_domains:
-            environ['ALLOWED_DOMAINS'] = allowed_domains.join(",")
+            environ['ALLOWED_DOMAINS'] = ",".join(allowed_domains)
 
 
     def _check_valid_xml(self, url):
