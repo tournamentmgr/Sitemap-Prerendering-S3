@@ -2,11 +2,11 @@
 [![Code Coverage](https://codecov.io/gh/danquack/Sitemap-Prerendering-S3/branch/master/graph/badge.svg)](https://codecov.io/gh/danquack/Sitemap-Prerendering-S3)
 
 # Sitemap Prerendering
-This module was designed to run as a prerender client that caches to s3. Utilizing either local or docker to render webpages, which are then posts the rendered static HTML page to S3. The idea behind this is to allow for a place for bots to scan static html pages. A .html extension is added to every page.
+This module was designed to run as a prerender client that caches to s3. Utilizing either local or docker to render webpages, which are then posts the rendered static HTML page to S3. The idea behind this is to allow for a place for bots to scan static html pages.
 
 ## Prereqs
 - Create an S3 Bucket. 
-- Have a domain with a sitemap (ex. https://google.com/sitemap.xml)
+- Have a domain with a robots.txt (ex. https://example.com/robots.txt)
 
 ## Utilization
 ### Docker
@@ -111,6 +111,17 @@ pre.capture()
       (recommended) - Character to replace the question mark. 
       If storing static pages, AWS doesnt allow you to have ? in a file to serve the content. So changing to a different character will fix this.
       Ex) /subpage?id=1 and your query_char_deliminator is '#', your page will be stored as /subpage#id=1
+    </td>
+  </tr>
+  <tr>
+    <td>
+      False
+    </td>
+    <td>
+      allowed_domains
+    </td>
+    <td>
+      List of domains to allow. If specified all other domains will be blocked during the page capturing.
     </td>
   </tr>
 </table>
