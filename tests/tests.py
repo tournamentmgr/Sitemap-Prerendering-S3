@@ -1,8 +1,10 @@
 from unittest import TestLoader, TextTestRunner, TestSuite
 from prender_test import PrerenderTestCase
+from scraper_test import ScraperTestCase
 if __name__ == '__main__':
     TEST_CLASSES_TO_RUN = [
-        PrerenderTestCase
+        PrerenderTestCase,
+        ScraperTestCase
     ]
 
     LOADER = TestLoader()

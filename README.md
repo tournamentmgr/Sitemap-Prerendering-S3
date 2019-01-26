@@ -113,4 +113,15 @@ pre.capture()
       Ex) /subpage?id=1 and your query_char_deliminator is '#', your page will be stored as /subpage#id=1
     </td>
   </tr>
+  <tr>
+    <td>
+      False
+    </td>
+    <td>
+      allowed_domains
+    </td>
+    <td>
+      List of domains to allow. If specified all other domains will be blocked during the page capturing.
+    </td>
+  </tr>
 </table>

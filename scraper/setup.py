@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='scraper',
-    version='1.3',
+    version='1.4',
     description='A module to render webpages',
     author='Dan Quackenbush',
     author_email='dan@tournamentmgr.com',
