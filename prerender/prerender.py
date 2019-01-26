@@ -1,7 +1,8 @@
-# pylint: disable=W0212,W0703,C0301
+# pylint: disable=W0212,W0703,C0301,R0913
 """
 A function to hold the Prerender class
 """
+from os import environ
 from logging import debug, error
 from urllib.parse import urlparse
 from urllib3 import disable_warnings
@@ -20,7 +21,8 @@ class Prerender():
                  robots_url: str,
                  s3_bucket: str,
                  auth: (str, str)=(None, None),
-                 query_char_deliminator='?'):
+                 query_char_deliminator: str = '?',
+                 allowed_domains: [str] = None):
 
         # Disable Verify Warnings
         disable_warnings()
@@ -33,6 +35,9 @@ class Prerender():
         self.domain = urlparse(self.robots_url).netloc
         self.query_char_deliminator = query_char_deliminator
         self.bucket = s3_bucket
+
+        if allowed_domains:
+            environ['ALLOWED_DOMAINS'] = ",".join(allowed_domains)
 
 
     def _check_valid_xml(self, url):
