@@ -54,7 +54,7 @@ class Prerender():
         from scraper.scraper import query_url
         return query_url(url, username=self.username, password=self.password)
 
-    def _capture_and_upload(self, url):
+    def capture_page_and_upload(self, url):
         """
         A wrapper function to capture, and then archive content. If it throws an error, log an skip
         """
@@ -104,7 +104,7 @@ class Prerender():
         urls = list(set(urls))
         debug("Found %s total urls to cache under %s", len(urls), url)
         for site in urls:
-            self._capture_and_upload(site)
+            self.capture_page_and_upload(site)
 
 
     def invalidate(self):
