@@ -8,49 +8,39 @@ This module was designed to run as a prerender client that caches to s3. Utilizi
 - Create an S3 Bucket. 
 - Have a domain with a robots.txt (ex. https://example.com/robots.txt)
 
-## Utilization
-### Docker
-<code>
- docker build -t sitemap-prerender . 
- docker run -e AWS_ACCESS_KEY_ID=AWSKEY -e AWS_SECRET_ACCESS_KEY=AWSSECRET -t sitemap-prerender -i python -c "from prerender.prerender import Prerender; Prerender(#Options).capture()"
-</code>
-
-### Development
+## Development
 
 If developing, ensure to install the requirements.txt file.
 
 <code>pip install -r requirements.txt</code>
 
-### Module Installation
-Install the modules:
+
+## Utilization
+### Docker
+<code>
+ docker build -t prerender .
+ 
+ docker run -e AWS_ACCESS_KEY_ID=AWSKEY -e AWS_SECRET_ACCESS_KEY=AWSSECRET -t prerender -i python -c "from prerender.prerender import Prerender; Prerender(#Options).capture()"
+</code>
+
+### Local Installation
+#### Install the modules:
 
 <code>
 python scraper/setup.py install
+
 python prerender/setup.py install
 </code>
 
 <br>
 
-Then from within your python code:
-
+#### Create Python Code
 <code>
 from prerender.prerender import Prerender
 
 pre = Prerender(
     # Options
 )</code>
-
-To invalidate bucket:
-
-<code>
-pre.invalidate()
-</code>
-
-To capture pages into s3 bucket:
-
-<code>
-pre.capture()
-</code>
 
 
 #### Options
@@ -125,3 +115,26 @@ pre.capture()
     </td>
   </tr>
 </table>
+
+
+
+## Module invocation
+#### Invalidate/Clear bucket:
+
+<code>
+pre.invalidate()
+</code>
+
+#### Capture from sitemaps within Robots.txt
+
+<code>
+pre.capture()
+</code>
+
+#### Single Page Capture
+If you prefer to capture a single page, versus a full domain.
+
+<code>
+pre.capture_page_and_upload("https://example.com")
+</code>
+

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='prerender',
-    version='1.5',
+    version='1.6',
     description='A module to prerender webpages and post to S3',
     author='Dan Quackenbush',
     author_email='dan@tournamentmgr.com',

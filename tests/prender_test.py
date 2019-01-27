@@ -47,7 +47,7 @@ class PrerenderTestCase(TestCase):
         self.assertEqual(response['VersionId'], 1)
 
     @responses.activate
-    @patch.object(Prerender, '_capture_and_upload')
+    @patch.object(Prerender, 'capture_page_and_upload')
     def test_capture_calls(self, prerender):
         responses.add(responses.GET, 'https://subdomain.example.com/robots.txt',
                       body="Sitemap: https://example.com/sitemap.xml", status=200)
@@ -72,13 +72,13 @@ class PrerenderTestCase(TestCase):
         Prerender(
             robots_url="https://example.com/sitemap.xml",
             s3_bucket="some-bucket",
-        )._capture_and_upload("https:/example.com/home/test/")
+        ).capture_page_and_upload("https:/example.com/home/test/")
         _, kwargs = archive.call_args_list[0]
         self.assertEqual(kwargs['file_name'], "home/test")
         self.assertEqual(kwargs['response'], "test")
 
     @patch.dict('os.environ', {})
-    @patch.object(Prerender, '_capture_and_upload')
+    @patch.object(Prerender, 'capture_page_and_upload')
     def test_analyze_site_to_get_urls(self, capture):
         urls = ["https://example.com/page1", "http://example.com/page2"]
         capture.return_value = None
@@ -98,7 +98,7 @@ class PrerenderTestCase(TestCase):
             robots_url="https://example.com/sitemap.xml",
             s3_bucket="some-bucket",
             auth=('test', 'pass')
-        )._capture_and_upload("https:/example.com/home/test/")
+        ).capture_page_and_upload("https:/example.com/home/test/")
         _, kwargs = query.call_args_list[0]
         self.assertEqual(kwargs['username'], "test")
         self.assertEqual(kwargs['password'], "pass")
