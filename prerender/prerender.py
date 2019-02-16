@@ -85,7 +85,7 @@ class Prerender():
                     file_name = urlparse(file_name).path
                 debug("Creating file %s", file_name)
                 obj = s3_client.Object(self.bucket, file_name)
-                return obj.put(Body=response)
+                return obj.put(Body=response, ContentType='text/html')
             return None
 
         # pylint: disable=W0703
