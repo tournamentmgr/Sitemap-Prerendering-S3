@@ -42,7 +42,7 @@ class PrerenderTestCase(TestCase):
             robots_url="https://subdomain.example.com/robots.txt",
             s3_bucket="some-bucket",
         )._archive_content(
-            file_name="test", response="some tezt"
+            file_name="test", response="some text"
         )
         self.assertEqual(response['VersionId'], 1)
 
