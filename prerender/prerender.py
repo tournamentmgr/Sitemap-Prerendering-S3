@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from urllib3 import disable_warnings
 
 # External
-from boto3 import resource, Session
+from boto3 import resource, client
 from requests import get
 from xmltodict import parse
 
@@ -78,16 +78,13 @@ class Prerender():
         """
         try:
             if response:
-                s3_client = Session().resource('s3')
                 if urlparse(file_name).query:
                     file_name = f"{urlparse(file_name).path}{self.query_char_deliminator}{urlparse(file_name).query}"
                 else:
                     file_name = urlparse(file_name).path
                 debug("Creating file %s", file_name)
-                obj = s3_client.Object(self.bucket, file_name)
-                return obj.put(Body=response, ContentType='text/html')
+                return client('s3').put_object(Bucket=self.bucket, Key=file_name, Body=response, ContentType='text/html')
             return None
-
         # pylint: disable=W0703
         except Exception as exc:
             raise exc
