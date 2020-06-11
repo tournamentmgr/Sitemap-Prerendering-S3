@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/danquack/Sitemap-Prerendering-S3.svg?branch=master)](https://travis-ci.com/danquack/Sitemap-Prerendering-S3)
-[![Code Coverage](https://codecov.io/gh/danquack/Sitemap-Prerendering-S3/branch/master/graph/badge.svg)](https://codecov.io/gh/danquack/Sitemap-Prerendering-S3)
+[![Actions Status](https://github.com/tournamentmgr/Sitemap-Prerendering-S3/workflows/test/badge.svg)](https://github.com/mattcat10/tournamentmgr-api/actions)
+[![Code Coverage](https://codecov.io/gh/tournamentmgr/Sitemap-Prerendering-S3/branch/master/graph/badge.svg)](https://codecov.io/gh/danquack/Sitemap-Prerendering-S3)
 
 # Sitemap Prerendering
 This module was designed to run as a prerender client that caches to s3. Utilizing either local or docker to render webpages, which are then posts the rendered static HTML page to S3. The idea behind this is to allow for a place for bots to scan static html pages.

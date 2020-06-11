@@ -1,0 +1,26 @@
+name: Docker Image Publish
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: docker.pkg.github.com
+        username: $GITHUB_ACTOR
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build the Docker image
+      run: docker build --tag docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA .
+    - name: tag with latest
+      run: docker tag docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:latest
+    - name: push to registry
+      run: |
+        docker push docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA
+        docker push docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:latest

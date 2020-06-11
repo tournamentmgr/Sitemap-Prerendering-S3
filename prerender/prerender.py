@@ -1,4 +1,4 @@
-# pylint: disable=W0212,W0703,C0301,R0913
+# pylint: disable=W0212,W0703,C0301,R0913,import-outside-toplevel
 """
 A function to hold the Prerender class
 """
