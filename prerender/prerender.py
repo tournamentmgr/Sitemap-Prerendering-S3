@@ -3,7 +3,7 @@
 A function to hold the Prerender class
 """
 from os import environ
-from logging import debug, error
+from logging import debug, info, error
 from urllib.parse import urlparse
 from urllib3 import disable_warnings
 
@@ -67,7 +67,7 @@ class Prerender():
                 path = path[:-1]
 
             # Archive the file
-            debug("Archiving %s", url)
+            info("Archiving %s", url)
             self._archive_content(file_name=path, response=response)
         except Exception as exc:
             error(exc)
@@ -99,7 +99,7 @@ class Prerender():
         items = parse(body).get('urlset', {}).get('url', {})
         urls = [item['loc'] for item in items if self.domain in item.get('loc')]
         urls = list(set(urls))
-        debug("Found %s total urls to cache under %s", len(urls), url)
+        info("Found %s total urls to cache under %s", len(urls), url)
         for site in urls:
             self.capture_page_and_upload(site)
 
