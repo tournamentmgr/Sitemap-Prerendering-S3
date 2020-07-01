@@ -7,6 +7,7 @@ from logging import debug
 from asyncio import get_event_loop
 from pyppeteer import launch
 
+
 def block_request(url):
     """
     A function to determine if url should be blocked based on environment variable
@@ -20,6 +21,7 @@ def block_request(url):
         return True
     return False
 
+
 async def interception(req):
     """
     A function to intercept url requests and block if specified
@@ -30,12 +32,18 @@ async def interception(req):
     else:
         await req.continue_()
 
+
 async def __get_page(url: str, username: str = None, password: str = None):
     """
     A function to get a url
     """
     browser = await launch(headless=True,
-                           args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'])
+                           args=[
+                               '--no-sandbox',
+                               '--disable-setuid-sandbox',
+                               '--disable-gpu',
+                               '--ignore-certificate-errors'
+                           ])
     page = await browser.newPage()
     if username and password:
         await page.authenticate({'username': username, 'password': password})
