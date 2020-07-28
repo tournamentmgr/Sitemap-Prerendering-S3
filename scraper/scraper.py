@@ -37,12 +37,12 @@ async def __get_page(url: str, username: str = None, password: str = None):
     """
     A function to get a url
     """
-    browser = await launch(headless=True,
+    browser = await launch(ignoreHTTPSErrors=True,
+                           headless=True,
                            args=[
                                '--no-sandbox',
                                '--disable-setuid-sandbox',
-                               '--disable-gpu',
-                               '--ignore-certificate-errors'
+                               '--disable-gpu'
                            ])
     page = await browser.newPage()
     if username and password:
