@@ -7,7 +7,7 @@ setup(
     author_email='dan@tournamentmgr.com',
     packages=find_packages(),
     install_requires=[
-        'pyppeteer'
+        'pyppeteer==0.2.2'
     ],
     python_requires='>=3.6',
     classifiers=[
