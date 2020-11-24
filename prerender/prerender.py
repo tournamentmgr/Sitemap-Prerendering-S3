@@ -115,7 +115,7 @@ class Prerender():
             debug("Cache successfully cleared")
         except Exception as exc:
             error("ERROR: S3 Deletion", exc)
-            raise Exception('Invalidation Deletion Error')
+            raise Exception('Invalidation Deletion Error') from exc
 
     def capture(self):
         """
