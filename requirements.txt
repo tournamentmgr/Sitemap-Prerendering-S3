@@ -1,5 +1,5 @@
 coverage==5.3
 pylint==2.6.0
-virtualenv==20.2.2
+virtualenv==20.3.0
 responses==0.12.1
 codecov==2.1.10
