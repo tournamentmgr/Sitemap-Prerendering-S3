@@ -17,10 +17,10 @@ jobs:
         username: $GITHUB_ACTOR
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build the Docker image
-      run: docker build --tag docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA .
+      run: docker build --tag ghcr.io/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA .
     - name: tag with latest
-      run: docker tag docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:latest
+      run: docker tag ghcr.io/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA ghcr.io/tournamentmgr/sitemap-prerendering-s3/prerender:latest
     - name: push to registry
       run: |
-        docker push docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA
-        docker push docker.pkg.github.com/tournamentmgr/sitemap-prerendering-s3/prerender:latest
+        docker push ghcr.io/tournamentmgr/sitemap-prerendering-s3/prerender:$GITHUB_SHA
+        docker push ghcr.io/tournamentmgr/sitemap-prerendering-s3/prerender:latest
