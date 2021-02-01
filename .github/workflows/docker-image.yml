@@ -15,6 +15,6 @@ jobs:
       with:
        username: ${{ github.actor }}
        password: ${{ secrets.GITHUB_TOKEN }}
-       registry: ghcr.io
+       registry: docker.pkg.github.com
        repository: tournamentmgr/sitemap-prerendering-s3/prerender
        tags: latest
