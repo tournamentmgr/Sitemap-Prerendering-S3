@@ -9,7 +9,7 @@ setup(
     install_requires=[
         'boto3==1.16.4',
         'requests==2.25.0',
-        'urllib3==1.26.2',
+        'urllib3==1.26.3',
         'xmltodict==0.12.0'
     ],
     python_requires='>=3.6',
