@@ -3,6 +3,7 @@ name: Docker Image Publish
 on:
   push:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,6 +16,6 @@ jobs:
       with:
        username: ${{ github.actor }}
        password: ${{ secrets.GITHUB_TOKEN }}
-       registry: docker.pkg.github.com
-       repository: tournamentmgr/sitemap-prerendering-s3/prerender
+       registry: ghcr.io/tournamentmgr
+       repository: prerender
        tags: latest
