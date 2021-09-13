@@ -1,5 +1,5 @@
 coverage
 pylint
 virtualenv
-responses==0.13.4
+responses==0.14.0
 codecov
