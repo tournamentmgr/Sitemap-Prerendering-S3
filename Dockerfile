@@ -1,4 +1,4 @@
-FROM python:3.9.0
+FROM python:3.10.0
 
 # Based on https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-puppeteer-in-docker
 RUN  apt-get update \
